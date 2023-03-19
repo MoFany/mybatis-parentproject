@@ -1,0 +1,6 @@
+# Project exclude paths
+/mybatis-20221207-helloproject/target/
+/mybatis-20221207-mapper/target/
+/mybatis-20221215-proxy/target/
+/mybatis-20221222-cache/target/
+/mybatis-20221222-dynamicsql/target/

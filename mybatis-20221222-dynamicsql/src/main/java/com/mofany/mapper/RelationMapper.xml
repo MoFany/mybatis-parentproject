@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mofany.mapper.RelationMapper">
+    <!-- 配置二级缓存 -->
+    <cache eviction="FIFO" flushInterval="60000" size="1024" readOnly="true"/>
+
+    <!--  结果集映射  -->
+    <resultMap id="Result_Relation" type="com.mofany.entity.Relation">
+        <id property="id" column="id"/>
+        <association property="user" javaType="com.mofany.entity.User">
+            <id property="id" column="userid"/>
+            <result property="username" column="username"/>
+            <result property="password" column="password"/>
+            <result property="email" column="email"/>
+        </association>
+        <association property="role" javaType="com.mofany.entity.Role">
+            <id property="id" column="roleid"/>
+            <result property="rolename" column="rolename"/>
+            <result property="roledesc" column="roledesc"/>
+        </association>
+    </resultMap>
+
+    <!--  三表关联查询  -->
+    <select id="queryAll" resultMap="Result_Relation">
+        select tur.id,
+               tu.id as userid,
+               tu.username,
+               tu.password,
+               tu.email,
+               tr.id as roleid,
+               tr.rolename,
+               tr.roledesc
+        from t_user_role tur
+                     join t_user tu on tur.user_id = tu.id
+                     join t_role tr on tur.role_id = tr.id ;
+    </select>
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!-- 配置顺序：顺序错误则报错 -->
+<!-- configuration（配置）-->
+    <!-- properties（属性）-->
+    <!-- settings（设置）-->
+    <!-- typeAliases（类型别名）-->
+    <!-- typeHandlers（类型处理器）-->
+    <!-- objectFactory（对象工厂）-->
+    <!-- plugins（插件）-->
+    <!-- environments（环境配置）-->
+        <!-- environment（环境变量）-->
+            <!-- transactionManager（事务管理器）-->
+            <!-- dataSource（数据源）-->
+    <!-- databaseIdProvider（数据库厂商标识）-->
+    <!-- mappers（映射器）-->
+<!-- 主配置文件 -->
+<configuration>
+
+    <!--  配置外部数据源文件  -->
+    <properties resource="db.properties"></properties>
+
+    <!--  配置别名  -->
+    <typeAliases>
+        <package name="com.mofany.entity"/>
+    </typeAliases>
+
+    <!--  配置插件  -->
+    <plugins>
+        <!-- 配置分页插件：分页插件使用的就是拦截器原理 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- 给分页插件设置方言 -->
+            <property name="helperDialect" value="MYSQL"/>
+        </plugin>
+    </plugins>
+
+    <!-- 配置环境 -->
+    <environments default="development">
+        <!-- 设置环境变量 -->
+        <environment id="development">
+            <!-- 设置事务管理器 -->
+            <transactionManager type="JDBC"/>
+            <!-- 配置数据源：数据源引用上面的外部属性 -->
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.Driver}"/>
+                <property name="url" value="${jdbc.Url}"/>
+                <property name="username" value="${jdbc.UserName}"/>
+                <property name="password" value="${jdbc.Password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- 配置接口映射文件 -->
+    <mappers>
+        <!-- <mapper resource="com/mofany/mapper/StudentMapper.xml"/> -->
+        <!-- 将包内的映射器接口全部注册为映射器 -->
+        <package name="com.mofany.mapper"/>
+    </mappers>
+</configuration>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 配置接口映射器文件 -->
+<mapper namespace="com.mofany.mapper.StudentMapper">
+    <!--  结果集映射  -->
+    <resultMap id="ResultMap_Field" type="com.mofany.entity.Student">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="sex" column="sex"></result>
+        <result property="age" column="age"></result>
+    </resultMap>
+    <!--  字段名 (alias可以动态指定表名) -->
+    <sql id="Base_Columns">
+        ${table}.id,${table}.name,${table}.sex,${table}.age
+    </sql>
+
+    <!--  查询全部  -->
+    <select id="selectAll" resultMap="ResultMap_Field">
+        select
+        <include refid="Base_Columns">
+            <property name="table" value="student"/>
+        </include>
+        from student
+    </select>
+
+    <!--  动态SQL：if的使用 (按id查询) -->
+    <select id="selectById" parameterType="com.mofany.entity.Student" resultMap="ResultMap_Field">
+        select
+        <include refid="Base_Columns">
+            <property name="table" value="student"/>
+        </include>
+        from student
+        where
+        <if test="id!=null">
+            id=#{id,jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <!--  动态SQL：动态条件  -->
+    <select id="selectDynamicCondition" parameterType="com.mofany.entity.Student" resultMap="ResultMap_Field">
+        select
+        <include refid="Base_Columns">
+            <property name="table" value="student"/>
+        </include>
+        from student
+        where
+        <if test="id!=null">
+            #{id,jdbcType=INTEGER}>0
+        </if>
+        <if test="name!=null and name!=''">
+            and name like concat(#{name,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="sex!=null and sex!=''">
+            and sex=#{sex,jdbcType=CHAR}
+        </if>
+        <if test="age!=null">
+            and 100>=#{age,jdbcType=SMALLINT}>=0
+        </if>
+    </select>
+
+    <!--  动态SQL：多条件查询 (按多个字段查询)  -->
+    <select id="selectByFields" parameterType="com.mofany.entity.Student" resultMap="ResultMap_Field">
+        select
+        <include refid="Base_Columns">
+            <property name="table" value="student"/>
+        </include>
+        from student
+        <!-- 使用where标签 -->
+        <where>
+            <!-- 多种选择 -->
+            <choose>
+                <when test="name!=null and name!=''">
+                    and name=#{name,jdbcType=VARCHAR}
+                </when>
+                <when test="sex!=null and sex!=''">
+                    and sex=#{sex,jdbcType=CHAR}
+                </when>
+                <when test="age!=null">
+                    and age=#{age,jdbcType=SMALLINT}
+                </when>
+                <!-- 以上条件均不成立时 -->
+                <otherwise>
+                    and id=#{id,jdbcType=INTEGER}
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <!--  动态SQL：多条件更新  -->
+    <update id="updateByCondition" parameterType="com.mofany.entity.Student">
+        update student
+        <set>
+            <if test="name!=null and name!=''">
+                name=#{name,jdbcType=VARCHAR},
+            </if>
+            <if test="sex!=null and sex!=''">
+                sex=#{sex,jdbcType=CHAR},
+            </if>
+            <if test="age!=null">
+                age=#{age,jdbcType=SMALLINT},
+            </if>
+        </set>
+        where id=#{id,jdbcType=INTEGER}
+    </update>
+
+    <!--  动态SQL：foreach的使用  -->
+    <select id="selectByIds" parameterType="_int[]" resultMap="ResultMap_Field">
+        select
+        <include refid="Base_Columns">
+            <property name="table" value="student"/>
+        </include>
+        from student
+        <where>
+            id in
+            <foreach collection="array" index="index" open="(" close=")" separator="," item="id">
+                #{id,jdbcType=INTEGER}
+            </foreach>
+        </where>
+    </select>
+
+    <!--  查询总记录数  -->
+    <select id="selectTotalCount" resultType="int">
+        select count(*) from student;
+    </select>
+
+    <!--  多表联合查询  -->
+
+</mapper>

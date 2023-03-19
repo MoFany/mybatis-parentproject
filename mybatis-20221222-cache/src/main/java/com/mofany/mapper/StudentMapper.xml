@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mofany.mapper.StudentMapper">
+    <!-- 配置二级缓存的缓存策略 -->
+    <cache eviction="FIFO" flushInterval="60000" size="1024" readOnly="true">
+    </cache>
+
+    <!-- 结果集映射 -->
+    <resultMap id="ResultMap_Fields" type="com.mofany.entity.Student">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+    </resultMap>
+
+    <!-- 可以复用的SQL片段 -->
+    <sql id="Columns">
+        id,
+        name,
+        sex,
+        age
+    </sql>
+    <!--  SQL语句的映射，并指定当前操作是否使用缓存  -->
+    <select id="queryById" parameterType="com.mofany.entity.Student" resultMap="ResultMap_Fields" useCache="true">
+        select
+        <include refid="Columns">
+        </include>
+        from student
+        where
+        <if test="id != null">
+            id = #{id,jdbcType=INTEGER}
+        </if>
+    </select>
+</mapper>

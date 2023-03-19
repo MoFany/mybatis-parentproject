@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mofany.mapper.RoleMapper">
+
+    <!-- 配置二级缓存 -->
+    <cache eviction="FIFO" flushInterval="60000" size="1024" readOnly="true"/>
+
+    <!--  多表关联查询 :角色角度查用户 -->
+    <resultMap id="ResultMap_Role" type="com.mofany.entity.Role">
+        <id property="id" column="roleid"/>
+        <result property="rolename" column="rolename"/>
+        <result property="roledesc" column="roledesc"/>
+        <collection property="userList" ofType="com.mofany.entity.User">
+            <id property="id" column="userid"/>
+            <result property="username" column="username"/>
+            <result property="password" column="password"/>
+            <result property="email" column="email"/>
+        </collection>
+    </resultMap>
+
+<!--  利用中间表查  -->
+    <select id="queryAll" resultMap="ResultMap_Role">
+        select
+               tr.id as roleid,
+               tr.rolename,
+               tr.roledesc,
+               tu.id as userid,
+               tu.username,
+               tu.password,
+               tu.email
+        from t_role tr
+                    join t_user_role tur on tr.id=tur.role_id
+                    join t_user tu on tu.id=tur.user_id;
+    </select>
+</mapper>

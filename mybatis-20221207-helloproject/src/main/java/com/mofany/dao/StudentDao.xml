@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--命名空间：命名空间不能重复-->
+<mapper namespace="student">
+    <!--  查询指定id的记录  -->
+    <select id="queryById" resultType="com.mofany.entity.Student">
+        select * from student where id = #{id}
+    </select>
+
+    <!--  按姓名查找  -->
+    <select id="queryByName" resultType="com.mofany.entity.Student">
+        select * from student where name=#{name}
+    </select>
+
+    <!--  查询指定范围的记录  -->
+    <select id="queryByRange" resultType="com.mofany.entity.Student">
+        select * from student limit #{count}
+    </select>
+
+    <!--  插入一条新记录  -->
+    <insert id="insertData" parameterType="com.mofany.entity.Student">
+        insert into student (id,name,sex,age) values (#{id},#{name},#{sex},#{age})
+    </insert>
+</mapper>
